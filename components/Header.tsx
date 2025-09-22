@@ -1,15 +1,9 @@
 'use client';
-
-import { useMiniKit } from '@coinbase/minikit';
-import { useAuthenticate } from '@coinbase/onchainkit/minikit';
 import { Bell, Search, User } from 'lucide-react';
 
 export function Header() {
-  const { context } = useMiniKit();
-  const { user } = useAuthenticate();
-
-  const displayName = context?.user?.displayName || user?.displayName || 'Friend';
-  const profilePic = context?.user?.pfpUrl;
+  const displayName = 'Friend';
+  const profilePic = null;
 
   return (
     <header className="bg-surface border-b border-gray-200 px-4 py-3">

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMiniKit } from '@coinbase/minikit';
-import { useAuthenticate } from '@coinbase/onchainkit/minikit';
 import { ProfileCard } from '../components/ProfileCard';
 import { ProjectCard } from '../components/ProjectCard';
 import { CreateProjectModal } from '../components/CreateProjectModal';
@@ -14,8 +12,6 @@ import { mockUsers, mockProjects } from '../lib/mockData';
 import { Search, Plus, Users, Briefcase } from 'lucide-react';
 
 export default function HomePage() {
-  const { context } = useMiniKit();
-  const { user } = useAuthenticate();
   
   const [activeTab, setActiveTab] = useState<'discover' | 'projects'>('discover');
   const [users, setUsers] = useState<User[]>(mockUsers);
