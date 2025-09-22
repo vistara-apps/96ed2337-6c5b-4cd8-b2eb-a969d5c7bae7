@@ -1,0 +1,30 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "frame": {
+    "version": "1",
+    "name": "CollabForge",
+    "subtitle": "Built with Zara",
+    "description": "CollabForge is a Base Mini App built with Zara.",
+    "iconUrl": "https://0co.to/images/zara-2.png",
+    "homeUrl": "https://96ed23376c5b4cd8b2eba969d5c7bae7-lgoa.vercel.app",
+    "splashImageUrl": "https://96ed23376c5b4cd8b2eba969d5c7bae7-tpnx.vercel.app/splash.png",
+    "splashBackgroundColor": "#000000",
+    "heroImageUrl": "https://96ed23376c5b4cd8b2eba969d5c7bae7-tpnx.vercel.app/image.png",
+    "tagline": "CollabForge",
+    "screenshotUrls": [
+      "https://96ed23376c5b4cd8b2eba969d5c7bae7-tpnx.vercel.app/screenshot.png",
+      "https://96ed23376c5b4cd8b2eba969d5c7bae7-tpnx.vercel.app/screenshot.png"
+    ],
+    "primaryCategory": "social",
+    "tags": [
+      "base",
+      "miniapp",
+      "onchainkit"
+    ],
+    "webhookUrl": "https://96ed23376c5b4cd8b2eba969d5c7bae7-lgoa.vercel.app/api/webhook"
+  }
+}
