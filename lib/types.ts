@@ -13,9 +13,9 @@ export interface Project {
   description: string;
   requiredSkills: string[];
   status: 'active' | 'completed' | 'paused';
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  ownerFarcasterId: string;
 }
 
 export interface CollaborationRequest {
@@ -24,18 +24,48 @@ export interface CollaborationRequest {
   recipientFarcasterId: string;
   projectId?: string;
   status: 'pending' | 'accepted' | 'declined';
-  message: string;
-  createdAt: string;
+  message?: string;
+  createdAt: Date;
 }
 
-export interface CreateProjectData {
-  projectName: string;
-  description: string;
-  requiredSkills: string[];
+export interface ProfileCardProps {
+  user: User;
+  variant: 'default' | 'compact';
 }
 
-export interface CollaborationRequestData {
-  message: string;
-  projectId?: string;
-  requiredSkills: string[];
+export interface ProjectCardProps {
+  project: Project;
+  variant: 'active' | 'completed';
+}
+
+export interface SkillTagProps {
+  skill: string;
+  variant: 'primary' | 'secondary';
+  onClick?: () => void;
+}
+
+export interface PrimaryButtonProps {
+  variant: 'default' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+export interface InputTextProps {
+  placeholder?: string;
+  value: string;
+  onChange: (value: string) => void;
+  variant?: 'default';
+  className?: string;
+}
+
+export interface TextAreaProps {
+  placeholder?: string;
+  value: string;
+  onChange: (value: string) => void;
+  variant?: 'default';
+  rows?: number;
+  className?: string;
 }
