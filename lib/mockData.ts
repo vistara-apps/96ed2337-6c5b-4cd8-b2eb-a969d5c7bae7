@@ -7,7 +7,10 @@ export const mockUsers: User[] = [
     bio: 'UI/UX Designer passionate about Web3 experiences',
     profilePicUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
     skills: ['UI Design', 'UX Design', 'Figma', 'Prototyping'],
-    portfolioUrls: ['https://dribbble.com/georgina', 'https://behance.net/georgina']
+    portfolioUrls: ['https://dribbble.com/georgina', 'https://behance.net/georgina'],
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    isVerified: true
   },
   {
     farcasterId: 'user2',
@@ -15,7 +18,10 @@ export const mockUsers: User[] = [
     bio: 'Full-stack developer building the future of DeFi',
     profilePicUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
     skills: ['React', 'Solidity', 'TypeScript', 'Smart Contracts'],
-    portfolioUrls: ['https://github.com/lilajin', 'https://lilajin.dev']
+    portfolioUrls: ['https://github.com/lilajin', 'https://lilajin.dev'],
+    createdAt: '2024-01-02T00:00:00Z',
+    updatedAt: '2024-01-02T00:00:00Z',
+    isVerified: true
   },
   {
     farcasterId: 'user3',
@@ -23,7 +29,10 @@ export const mockUsers: User[] = [
     bio: 'Creative director with 8+ years in brand design',
     profilePicUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
     skills: ['Brand Design', 'Art Direction', 'Illustration', 'Motion Graphics'],
-    portfolioUrls: ['https://marcuschen.co', 'https://instagram.com/marcusdesigns']
+    portfolioUrls: ['https://marcuschen.co', 'https://instagram.com/marcusdesigns'],
+    createdAt: '2024-01-03T00:00:00Z',
+    updatedAt: '2024-01-03T00:00:00Z',
+    isVerified: false
   },
   {
     farcasterId: 'user4',
@@ -31,7 +40,10 @@ export const mockUsers: User[] = [
     bio: 'Product manager turning ideas into reality',
     profilePicUrl: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face',
     skills: ['Product Management', 'Strategy', 'User Research', 'Analytics'],
-    portfolioUrls: ['https://linkedin.com/in/sarahkim', 'https://medium.com/@sarahkim']
+    portfolioUrls: ['https://linkedin.com/in/sarahkim', 'https://medium.com/@sarahkim'],
+    createdAt: '2024-01-04T00:00:00Z',
+    updatedAt: '2024-01-04T00:00:00Z',
+    isVerified: true
   },
   {
     farcasterId: 'user5',
@@ -39,7 +51,10 @@ export const mockUsers: User[] = [
     bio: 'Blockchain developer specializing in DeFi protocols',
     profilePicUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
     skills: ['Solidity', 'Web3', 'DeFi', 'Smart Contract Auditing'],
-    portfolioUrls: ['https://github.com/alexrivera', 'https://alexrivera.eth']
+    portfolioUrls: ['https://github.com/alexrivera', 'https://alexrivera.eth'],
+    createdAt: '2024-01-05T00:00:00Z',
+    updatedAt: '2024-01-05T00:00:00Z',
+    isVerified: false
   }
 ];
 
@@ -53,7 +68,9 @@ export const mockProjects: Project[] = [
     createdAt: '2024-01-15T10:00:00Z',
     updatedAt: '2024-01-20T15:30:00Z',
     ownerFarcasterId: 'user2',
-    collaborators: ['user1']
+    collaborators: ['user1'],
+    budget: '5 ETH',
+    deadline: '2024-03-15T00:00:00Z'
   },
   {
     projectId: 'proj2',
@@ -64,7 +81,9 @@ export const mockProjects: Project[] = [
     createdAt: '2024-01-10T09:00:00Z',
     updatedAt: '2024-01-18T12:00:00Z',
     ownerFarcasterId: 'user5',
-    collaborators: ['user3']
+    collaborators: ['user3'],
+    budget: '10 ETH',
+    deadline: '2024-04-01T00:00:00Z'
   },
   {
     projectId: 'proj3',
@@ -75,7 +94,9 @@ export const mockProjects: Project[] = [
     createdAt: '2024-01-12T14:00:00Z',
     updatedAt: '2024-01-19T16:45:00Z',
     ownerFarcasterId: 'user4',
-    collaborators: []
+    collaborators: [],
+    budget: '8 ETH',
+    deadline: '2024-03-30T00:00:00Z'
   }
 ];
 

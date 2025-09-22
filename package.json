@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "init-db": "tsx lib/initData.ts"
   },
   "dependencies": {
     "@coinbase/minikit": "^0.1.0",

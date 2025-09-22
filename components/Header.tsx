@@ -1,12 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { useMiniKit } from '@coinbase/minikit';
 import { useAuthenticate } from '@coinbase/onchainkit/minikit';
 import { Bell, Search, User } from 'lucide-react';
+import { NotificationsPanel } from './NotificationsPanel';
 
 export function Header() {
   const { context } = useMiniKit();
   const { user } = useAuthenticate();
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const displayName = context?.user?.displayName || user?.displayName || 'Friend';
   const profilePic = context?.user?.pfpUrl;
@@ -28,7 +31,10 @@ export function Header() {
           <button className="p-2 hover:bg-gray-100 rounded-md transition-colors duration-200">
             <Search className="w-5 h-5 text-text-secondary" />
           </button>
-          <button className="p-2 hover:bg-gray-100 rounded-md transition-colors duration-200 relative">
+          <button
+            onClick={() => setShowNotifications(true)}
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors duration-200 relative"
+          >
             <Bell className="w-5 h-5 text-text-secondary" />
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs"></span>
           </button>
@@ -50,6 +56,11 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      <NotificationsPanel
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
     </header>
   );
 }

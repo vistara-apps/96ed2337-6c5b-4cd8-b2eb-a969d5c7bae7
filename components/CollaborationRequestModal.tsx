@@ -1,18 +1,37 @@
 'use client';
 
-import { useState } from 'react';
-import { X, Send } from 'lucide-react';
-import type { User } from '../lib/types';
+import { useState, useEffect } from 'react';
+import { X, Send, ChevronDown } from 'lucide-react';
+import type { User, Project } from '../lib/types';
 
 interface CollaborationRequestModalProps {
   targetUser: User;
   onClose: () => void;
-  onSubmit: (message: string) => void;
+  onSubmit: (message: string, projectId?: string) => void;
 }
 
 export function CollaborationRequestModal({ targetUser, onClose, onSubmit }: CollaborationRequestModalProps) {
   const [message, setMessage] = useState('');
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showProjectDropdown, setShowProjectDropdown] = useState(false);
+
+  useEffect(() => {
+    const fetchUserProjects = async () => {
+      try {
+        // In a real app, we'd get the current user's ID from context
+        // For now, we'll fetch all projects and filter client-side
+        const response = await fetch('/api/projects');
+        const projects = await response.json();
+        setUserProjects(projects);
+      } catch (error) {
+        console.error('Error fetching user projects:', error);
+      }
+    };
+
+    fetchUserProjects();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +40,7 @@ export function CollaborationRequestModal({ targetUser, onClose, onSubmit }: Col
     setIsSubmitting(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      onSubmit(message);
+      onSubmit(message, selectedProjectId || undefined);
     } catch (error) {
       console.error('Error sending collaboration request:', error);
     } finally {
@@ -55,6 +74,61 @@ export function CollaborationRequestModal({ targetUser, onClose, onSubmit }: Col
                 {targetUser.skills.slice(0, 2).join(', ')}
                 {targetUser.skills.length > 2 && ` +${targetUser.skills.length - 2} more`}
               </p>
+            </div>
+          </div>
+
+          {/* Project Selection */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-text-primary mb-1">
+              Link to Project (Optional)
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowProjectDropdown(!showProjectDropdown)}
+                className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-md text-left hover:border-primary transition-colors duration-200"
+              >
+                <span className={selectedProjectId ? 'text-text-primary' : 'text-text-secondary'}>
+                  {selectedProjectId
+                    ? userProjects.find(p => p.projectId === selectedProjectId)?.projectName
+                    : 'Select a project to link this request to...'
+                  }
+                </span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showProjectDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showProjectDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-gray-200 rounded-lg card-shadow max-h-48 overflow-y-auto z-10">
+                  <div className="p-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedProjectId('');
+                        setShowProjectDropdown(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 text-text-primary transition-colors duration-200"
+                    >
+                      No project (General inquiry)
+                    </button>
+                    {userProjects.map((project) => (
+                      <button
+                        key={project.projectId}
+                        type="button"
+                        onClick={() => {
+                          setSelectedProjectId(project.projectId);
+                          setShowProjectDropdown(false);
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 text-text-primary transition-colors duration-200"
+                      >
+                        <div className="font-medium">{project.projectName}</div>
+                        <div className="text-xs text-text-secondary truncate">
+                          {project.requiredSkills.slice(0, 3).join(', ')}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

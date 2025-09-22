@@ -10,15 +10,15 @@ import { CreateProjectModal } from '../components/CreateProjectModal';
 import { CollaborationRequestModal } from '../components/CollaborationRequestModal';
 import { SkillFilter } from '../components/SkillFilter';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { mockUsers, mockProjects } from '../lib/mockData';
-import type { User, Project } from '../lib/types';
+import type { User, Project, CreateProjectData } from '../lib/types';
 
 export default function HomePage() {
   const { context } = useMiniKit();
   const { user } = useAuthenticate();
   const [activeTab, setActiveTab] = useState<'discover' | 'projects'>('discover');
-  const [filteredUsers, setFilteredUsers] = useState<User[]>(mockUsers);
-  const [userProjects, setUserProjects] = useState<Project[]>(mockProjects);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCollabRequest, setShowCollabRequest] = useState(false);
@@ -26,36 +26,64 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
+    const fetchData = async () => {
+      try {
+        // Fetch users
+        const usersResponse = await fetch('/api/users');
+        const users = await usersResponse.json();
+        setAllUsers(users);
+        setFilteredUsers(users);
+
+        // Fetch projects
+        const projectsResponse = await fetch('/api/projects');
+        const projects = await projectsResponse.json();
+        setUserProjects(projects);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
     if (selectedSkills.length === 0) {
-      setFilteredUsers(mockUsers);
+      setFilteredUsers(allUsers);
     } else {
-      const filtered = mockUsers.filter(user =>
+      const filtered = allUsers.filter(user =>
         user.skills.some(skill => selectedSkills.includes(skill))
       );
       setFilteredUsers(filtered);
     }
-  }, [selectedSkills]);
+  }, [selectedSkills, allUsers]);
 
   const handleCollaborationRequest = (targetUser: User) => {
     setSelectedUser(targetUser);
     setShowCollabRequest(true);
   };
 
-  const handleCreateProject = (projectData: Omit<Project, 'projectId' | 'createdAt' | 'updatedAt'>) => {
-    const newProject: Project = {
-      ...projectData,
-      projectId: `proj_${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    setUserProjects(prev => [newProject, ...prev]);
-    setShowCreateProject(false);
+  const handleCreateProject = async (projectData: CreateProjectData) => {
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(projectData),
+      });
+
+      if (response.ok) {
+        const newProject = await response.json();
+        setUserProjects(prev => [newProject, ...prev]);
+        setShowCreateProject(false);
+      } else {
+        console.error('Failed to create project');
+      }
+    } catch (error) {
+      console.error('Error creating project:', error);
+    }
   };
 
   if (isLoading) {
@@ -182,10 +210,48 @@ export default function HomePage() {
             setShowCollabRequest(false);
             setSelectedUser(null);
           }}
-          onSubmit={(message) => {
-            console.log('Collaboration request sent:', message);
-            setShowCollabRequest(false);
-            setSelectedUser(null);
+          onSubmit={async (message, projectId) => {
+            try {
+              // Create collaboration request
+              const collabResponse = await fetch('/api/collaborations', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  senderFarcasterId: context?.user?.fid?.toString() || 'anonymous',
+                  recipientFarcasterId: selectedUser.farcasterId,
+                  message,
+                  projectId,
+                }),
+              });
+
+              if (collabResponse.ok) {
+                const collabRequest = await collabResponse.json();
+
+                // Process payment for collaboration request
+                const paymentResponse = await fetch('/api/payments', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    type: 'collaboration_request',
+                    referenceId: collabRequest.requestId,
+                    fromAddress: '0x' + Math.random().toString(16).substr(2, 40), // Mock address
+                  }),
+                });
+
+                if (paymentResponse.ok) {
+                  console.log('Collaboration request sent successfully with payment');
+                }
+              }
+
+              setShowCollabRequest(false);
+              setSelectedUser(null);
+            } catch (error) {
+              console.error('Error sending collaboration request:', error);
+            }
           }}
         />
       )}

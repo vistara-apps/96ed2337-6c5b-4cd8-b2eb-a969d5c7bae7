@@ -1,130 +1,226 @@
-# CollabForge - Base Mini App
+# CollabForge
 
-Find your creative co-pilot for epic projects within the Base ecosystem.
+A social platform for discovering and connecting with creative collaborators based on skills and project needs within the Base ecosystem.
 
-## Features
+## 🚀 Features
 
-- **Skill-Based Matching**: Discover collaborators based on specific creative or technical skills
-- **Project Portfolio Showcase**: Display your work to attract the right collaborators
-- **Integrated Project Briefing**: Define project scope and requirements clearly
-- **Farcaster Integration**: Seamless identity and social features
-- **Micro-transaction Model**: Pay-per-connection requests and featured placements
+### Core Features
+- **Skill-Based Matching**: Users can create profiles highlighting their creative skills and search for others with complementary skills
+- **Project Portfolio Showcase**: Users can upload or link to examples of their previous work
+- **Integrated Project Briefing**: A simple template to define project scope, goals, deliverables, and required skill sets
+- **Farcaster Integration**: Leverage Farcaster identity and allow users to initiate collaboration requests directly from their feed
 
-## Tech Stack
+### Business Model
+- **Micro-transactions**: Pay per 'connection request' or for 'featured profile' placement
+- **Pricing**: $0.05 per connection request, $1 for 24hr featured placement
+- **Platform**: Built on Base network for seamless Web3 integration
 
-- **Framework**: Next.js 15 with App Router
-- **Blockchain**: Base Network integration via MiniKit
-- **Identity**: OnchainKit for wallet and identity management
-- **Styling**: Tailwind CSS with custom design system
-- **TypeScript**: Full type safety throughout
+## 🛠️ Tech Stack
 
-## Getting Started
+### Frontend
+- **Next.js 15.0.0** - React framework with App Router
+- **React 18** - UI library
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling framework
+- **MiniKit & OnchainKit** - Base integration and Web3 functionality
+- **Viem & Wagmi** - Ethereum interaction
 
-1. **Install dependencies**:
+### Backend
+- **Next.js API Routes** - Serverless API endpoints
+- **SQLite** - Database (development)
+- **Base Network RPC** - Blockchain interactions
+
+### Integrations
+- **Farcaster Hub API** - Social graph integration
+- **Base Network** - On-chain features and payments
+- **Frames.js** - Farcaster frame support
+
+## 📁 Project Structure
+
+```
+collabforge/
+├── app/                          # Next.js app directory
+│   ├── api/                      # API routes
+│   │   ├── users/               # User management
+│   │   ├── projects/            # Project management
+│   │   ├── collaborations/      # Collaboration requests
+│   │   ├── payments/            # Payment processing
+│   │   ├── farcaster/           # Farcaster integration
+│   │   └── webhook/             # Webhook handling
+│   ├── components/              # React components
+│   ├── lib/                     # Utility functions and types
+│   └── page.tsx                 # Main page
+├── components/                  # Shared components
+├── lib/                         # Shared utilities
+├── public/                      # Static assets
+└── README.md
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Base network wallet (for testing)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd collabforge
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
+   # or
+   yarn install
    ```
 
-2. **Set up environment variables**:
-   Copy `.env.local` and add your OnchainKit API key:
+3. **Set up environment variables**
    ```bash
-   NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_api_key_here
+   cp .env.local.example .env.local
+   # Edit .env.local with your configuration
    ```
 
-3. **Run the development server**:
+4. **Run the development server**
    ```bash
    npm run dev
+   # or
+   yarn dev
    ```
 
-4. **Open in Base App**:
-   Navigate to `http://localhost:3000` in Base App or compatible Farcaster client
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-## Project Structure
+## 📊 Data Models
 
-```
-app/
-├── layout.tsx          # Root layout with providers
-├── page.tsx           # Main application page
-├── providers.tsx      # MiniKit and OnchainKit providers
-├── globals.css        # Global styles and design tokens
-└── loading.tsx        # Loading UI
-
-components/
-├── Header.tsx                    # App header with user info
-├── ProfileCard.tsx              # User profile display
-├── ProjectCard.tsx              # Project showcase
-├── SkillFilter.tsx              # Skill filtering component
-├── CreateProjectModal.tsx       # Project creation modal
-├── CollaborationRequestModal.tsx # Collaboration request form
-└── LoadingSpinner.tsx           # Loading indicator
-
-lib/
-├── types.ts           # TypeScript type definitions
-├── mockData.ts        # Sample data for development
-└── utils.ts           # Utility functions
+### User
+```typescript
+{
+  farcasterId: string;
+  displayName: string;
+  bio: string;
+  profilePicUrl: string;
+  skills: string[];
+  portfolioUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+  isVerified: boolean;
+}
 ```
 
-## Key Components
+### Project
+```typescript
+{
+  projectId: string;
+  projectName: string;
+  description: string;
+  requiredSkills: string[];
+  status: 'active' | 'completed' | 'cancelled';
+  createdAt: string;
+  updatedAt: string;
+  ownerFarcasterId: string;
+  collaborators: string[];
+  budget?: string;
+  deadline?: string;
+}
+```
 
-### User Profiles
-- Display skills, bio, and portfolio links
-- Skill-based filtering and search
-- Collaboration request system
+### CollaborationRequest
+```typescript
+{
+  requestId: string;
+  senderFarcasterId: string;
+  recipientFarcasterId: string;
+  projectId?: string;
+  message: string;
+  status: 'pending' | 'accepted' | 'declined';
+  createdAt: string;
+  respondedAt?: string;
+  paymentTxHash?: string;
+}
+```
+
+## 🎨 Design System
+
+### Colors
+- **Primary**: `hsl(210, 90%, 50%)` - Base blue
+- **Accent**: `hsl(130, 70%, 55%)` - Success green
+- **Background**: `hsl(210, 36%, 96%)` - Light blue-gray
+- **Surface**: `hsl(0, 0%, 100%)` - White
+- **Text Primary**: `hsl(210, 40%, 15%)` - Dark blue-gray
+- **Text Secondary**: `hsl(210, 40%, 35%)` - Medium blue-gray
+
+### Typography
+- **Display**: `text-2xl font-bold leading-tight`
+- **Heading**: `text-xl font-semibold leading-normal`
+- **Body**: `text-base leading-7`
+- **Caption**: `text-sm text-muted-foreground`
+
+### Layout
+- **Grid**: 12-column fluid grid with 16px gutter
+- **Container**: `max-w-xl px-4`
+- **Spacing**: 4px, 8px, 16px, 24px scale
+
+## 🔧 API Endpoints
+
+### Users
+- `GET /api/users` - Get all users
+- `GET /api/users/[farcasterId]` - Get user by Farcaster ID
+- `POST /api/users` - Create new user
+- `PUT /api/users/[farcasterId]` - Update user
 
 ### Projects
-- Project creation with skill requirements
-- Status tracking (active, completed, paused)
-- Collaborator management
+- `GET /api/projects` - Get all projects
+- `GET /api/projects/[projectId]` - Get project by ID
+- `POST /api/projects` - Create new project
+- `PUT /api/projects/[projectId]` - Update project
 
-### Micro-transactions
-- $0.05 per collaboration request
-- $1 for 24-hour featured profile placement
-- Integrated with Base network for payments
+### Collaborations
+- `GET /api/collaborations` - Get collaboration requests
+- `POST /api/collaborations` - Create collaboration request
+- `PUT /api/collaborations/[requestId]` - Update request status
 
-## Design System
+### Payments
+- `POST /api/payments` - Process payment transaction
 
-The app uses a custom design system with:
-- **Primary Color**: `hsl(210, 90%, 50%)` (Blue)
-- **Accent Color**: `hsl(130, 70%, 55%)` (Green)
-- **Purple Gradient**: Matching the brand aesthetic
-- **Mobile-first**: Responsive design optimized for mobile
+### Farcaster
+- `POST /api/farcaster/frame` - Handle frame interactions
+- `POST /api/webhook` - Handle webhooks
 
-## Development
+## 🚀 Deployment
 
-### Adding New Features
+### Build for Production
+```bash
+npm run build
+npm start
+```
 
-1. Define types in `lib/types.ts`
-2. Create components in `components/`
-3. Add mock data to `lib/mockData.ts`
-4. Implement in main page or create new routes
+### Environment Variables for Production
+```env
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+DATABASE_URL=your-production-database-url
+FARCASTER_HUB_URL=https://hub.farcaster.xyz
+BASE_RPC_URL=https://mainnet.base.org
+```
 
-### Styling Guidelines
-
-- Use Tailwind CSS classes
-- Follow the design system tokens
-- Ensure mobile-first responsive design
-- Use semantic color variables
-
-## Deployment
-
-The app is designed to be deployed as a Base Mini App:
-
-1. Build the application:
-   ```bash
-   npm run build
-   ```
-
-2. Deploy to your preferred hosting platform
-3. Configure the Mini App manifest for Base App discovery
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## License
+## 📄 License
 
-MIT License - see LICENSE file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built on the Base network
+- Powered by Farcaster social graph
+- Inspired by the creative collaboration needs of the Web3 community
+
