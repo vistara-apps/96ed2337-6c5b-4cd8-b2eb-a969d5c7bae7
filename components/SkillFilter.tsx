@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { Filter, X } from 'lucide-react';
+import { SkillTag } from './SkillTag';
 import { availableSkills } from '../lib/mockData';
-import { ChevronDown, X } from 'lucide-react';
 
 interface SkillFilterProps {
   selectedSkills: string[];
@@ -10,7 +11,7 @@ interface SkillFilterProps {
 }
 
 export function SkillFilter({ selectedSkills, onSkillsChange }: SkillFilterProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [showAllSkills, setShowAllSkills] = useState(false);
 
   const toggleSkill = (skill: string) => {
     if (selectedSkills.includes(skill)) {
@@ -20,73 +21,56 @@ export function SkillFilter({ selectedSkills, onSkillsChange }: SkillFilterProps
     }
   };
 
-  const clearAll = () => {
+  const clearFilters = () => {
     onSkillsChange([]);
   };
 
+  const displayedSkills = showAllSkills ? availableSkills : availableSkills.slice(0, 8);
+
   return (
-    <div className="relative">
-      {/* Selected Skills */}
-      {selectedSkills.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-3">
-          {selectedSkills.map((skill) => (
-            <span
-              key={skill}
-              className="inline-flex items-center space-x-1 px-3 py-1 bg-primary text-white rounded-full text-sm"
-            >
-              <span>{skill}</span>
-              <button
-                onClick={() => toggleSkill(skill)}
-                className="hover:bg-white/20 rounded-full p-0.5"
-              >
-                <X size={12} />
-              </button>
-            </span>
-          ))}
-          <button
-            onClick={clearAll}
-            className="text-sm text-text-secondary hover:text-text-primary underline"
-          >
-            Clear all
-          </button>
+    <div className="bg-surface rounded-lg shadow-card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-2">
+          <Filter className="w-4 h-4 text-text-secondary" />
+          <span className="font-medium text-text-primary">Filter by Skills</span>
         </div>
+        {selectedSkills.length > 0 && (
+          <button
+            onClick={clearFilters}
+            className="flex items-center space-x-1 text-sm text-text-secondary hover:text-text-primary"
+          >
+            <X className="w-3 h-3" />
+            <span>Clear</span>
+          </button>
+        )}
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-3">
+        {displayedSkills.map((skill) => (
+          <SkillTag
+            key={skill}
+            skill={skill}
+            variant="primary"
+            isSelected={selectedSkills.includes(skill)}
+            onClick={() => toggleSkill(skill)}
+          />
+        ))}
+      </div>
+
+      {availableSkills.length > 8 && (
+        <button
+          onClick={() => setShowAllSkills(!showAllSkills)}
+          className="text-sm text-primary hover:underline"
+        >
+          {showAllSkills ? 'Show Less' : `Show All ${availableSkills.length} Skills`}
+        </button>
       )}
 
-      {/* Filter Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-md bg-surface hover:bg-gray-50 transition-colors duration-200"
-      >
-        <span className="text-text-secondary">
-          {selectedSkills.length === 0 
-            ? 'Filter by skills...' 
-            : `${selectedSkills.length} skill${selectedSkills.length === 1 ? '' : 's'} selected`
-          }
-        </span>
-        <ChevronDown 
-          size={16} 
-          className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-        />
-      </button>
-
-      {/* Dropdown */}
-      {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-gray-200 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-          <div className="p-2 space-y-1">
-            {availableSkills.map((skill) => (
-              <button
-                key={skill}
-                onClick={() => toggleSkill(skill)}
-                className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
-                  selectedSkills.includes(skill)
-                    ? 'bg-primary text-white'
-                    : 'hover:bg-gray-100 text-text-primary'
-                }`}
-              >
-                {skill}
-              </button>
-            ))}
-          </div>
+      {selectedSkills.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-200">
+          <p className="text-sm text-text-secondary">
+            Showing creators with: {selectedSkills.join(', ')}
+          </p>
         </div>
       )}
     </div>

@@ -21,9 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <div className="min-h-screen bg-background">
-            {children}
-          </div>
+          {children}
         </Providers>
       </body>
     </html>

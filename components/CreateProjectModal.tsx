@@ -1,74 +1,60 @@
 'use client';
 
 import { useState } from 'react';
-import { Project } from '../lib/types';
-import { availableSkills } from '../lib/mockData';
 import { X, Plus } from 'lucide-react';
+import { CreateProjectData } from '../lib/types';
+import { SkillTag } from './SkillTag';
+import { availableSkills } from '../lib/mockData';
 
 interface CreateProjectModalProps {
   onClose: () => void;
-  onSubmit: (project: Omit<Project, 'projectId' | 'createdAt' | 'updatedAt'>) => void;
+  onSubmit: (data: CreateProjectData) => void;
 }
 
 export function CreateProjectModal({ onClose, onSubmit }: CreateProjectModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateProjectData>({
     projectName: '',
     description: '',
-    requiredSkills: [] as string[],
-    status: 'active' as const,
-    ownerFarcasterId: 'current_user' // In real app, get from auth
+    requiredSkills: []
   });
 
-  const [skillInput, setSkillInput] = useState('');
-  const [showSkillSuggestions, setShowSkillSuggestions] = useState(false);
+  const [showSkillSelector, setShowSkillSelector] = useState(false);
 
-  const filteredSkills = availableSkills.filter(skill =>
-    skill.toLowerCase().includes(skillInput.toLowerCase()) &&
-    !formData.requiredSkills.includes(skill)
-  );
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.projectName.trim() && formData.description.trim() && formData.requiredSkills.length > 0) {
+      onSubmit(formData);
+    }
+  };
 
-  const addSkill = (skill: string) => {
-    if (!formData.requiredSkills.includes(skill)) {
+  const toggleSkill = (skill: string) => {
+    if (formData.requiredSkills.includes(skill)) {
+      setFormData(prev => ({
+        ...prev,
+        requiredSkills: prev.requiredSkills.filter(s => s !== skill)
+      }));
+    } else {
       setFormData(prev => ({
         ...prev,
         requiredSkills: [...prev.requiredSkills, skill]
       }));
     }
-    setSkillInput('');
-    setShowSkillSuggestions(false);
-  };
-
-  const removeSkill = (skill: string) => {
-    setFormData(prev => ({
-      ...prev,
-      requiredSkills: prev.requiredSkills.filter(s => s !== skill)
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.projectName.trim() && formData.description.trim()) {
-      onSubmit(formData);
-    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-surface rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-text-primary">
-            Create New Project
-          </h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-surface rounded-lg shadow-card w-full max-w-md max-h-[90vh] overflow-y-auto animate-slide-up">
+        <div className="sticky top-0 bg-surface border-b border-gray-200 p-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-text-primary">Create New Project</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X size={20} />
+            <X className="w-5 h-5 text-text-secondary" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          {/* Project Name */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">
               Project Name *
@@ -77,13 +63,12 @@ export function CreateProjectModal({ onClose, onSubmit }: CreateProjectModalProp
               type="text"
               value={formData.projectName}
               onChange={(e) => setFormData(prev => ({ ...prev, projectName: e.target.value }))}
-              className="input-field"
-              placeholder="Enter project name..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="Enter project name"
               required
             />
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">
               Description *
@@ -91,87 +76,72 @@ export function CreateProjectModal({ onClose, onSubmit }: CreateProjectModalProp
             <textarea
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="input-field min-h-[100px] resize-none"
-              placeholder="Describe your project and what you're looking to achieve..."
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+              placeholder="Describe your project and what you're looking to achieve"
               required
             />
           </div>
 
-          {/* Required Skills */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">
-              Required Skills
+              Required Skills *
             </label>
             
-            {/* Selected Skills */}
             {formData.requiredSkills.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {formData.requiredSkills.map((skill) => (
-                  <span
+                  <SkillTag
                     key={skill}
-                    className="inline-flex items-center space-x-1 px-2 py-1 bg-primary text-white rounded-full text-sm"
-                  >
-                    <span>{skill}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeSkill(skill)}
-                      className="hover:bg-white/20 rounded-full p-0.5"
-                    >
-                      <X size={12} />
-                    </button>
-                  </span>
+                    skill={skill}
+                    variant="primary"
+                    isSelected={true}
+                    onClick={() => toggleSkill(skill)}
+                  />
                 ))}
               </div>
             )}
 
-            {/* Skill Input */}
-            <div className="relative">
-              <input
-                type="text"
-                value={skillInput}
-                onChange={(e) => {
-                  setSkillInput(e.target.value);
-                  setShowSkillSuggestions(true);
-                }}
-                onFocus={() => setShowSkillSuggestions(true)}
-                className="input-field"
-                placeholder="Type to add skills..."
-              />
+            <button
+              type="button"
+              onClick={() => setShowSkillSelector(!showSkillSelector)}
+              className="flex items-center space-x-2 text-primary hover:underline"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Skills</span>
+            </button>
 
-              {/* Skill Suggestions */}
-              {showSkillSuggestions && skillInput && filteredSkills.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-gray-200 rounded-md shadow-lg z-10 max-h-40 overflow-y-auto">
-                  {filteredSkills.slice(0, 5).map((skill) => (
-                    <button
+            {showSkillSelector && (
+              <div className="mt-3 p-3 border border-gray-200 rounded-lg">
+                <div className="flex flex-wrap gap-2">
+                  {availableSkills.map((skill) => (
+                    <SkillTag
                       key={skill}
-                      type="button"
-                      onClick={() => addSkill(skill)}
-                      className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
-                    >
-                      {skill}
-                    </button>
+                      skill={skill}
+                      variant="secondary"
+                      isSelected={formData.requiredSkills.includes(skill)}
+                      onClick={() => toggleSkill(skill)}
+                    />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
-          {/* Submit Button */}
           <div className="flex space-x-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="btn-secondary flex-1"
+              className="flex-1 px-4 py-3 border border-gray-300 text-text-secondary rounded-lg font-medium hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-primary flex-1 flex items-center justify-center space-x-2"
-              disabled={!formData.projectName.trim() || !formData.description.trim()}
+              disabled={!formData.projectName.trim() || !formData.description.trim() || formData.requiredSkills.length === 0}
+              className="flex-1 px-4 py-3 bg-primary text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Plus size={16} />
-              <span>Create Project</span>
+              Create Project
             </button>
           </div>
         </form>

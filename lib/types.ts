@@ -15,7 +15,7 @@ export interface Project {
   status: 'active' | 'completed' | 'paused';
   createdAt: string;
   updatedAt: string;
-  ownerFarcasterId: string;
+  userId: string;
 }
 
 export interface CollaborationRequest {
@@ -23,15 +23,19 @@ export interface CollaborationRequest {
   senderFarcasterId: string;
   recipientFarcasterId: string;
   projectId?: string;
-  message: string;
   status: 'pending' | 'accepted' | 'declined';
+  message: string;
   createdAt: string;
 }
 
-export interface ProjectBrief {
+export interface CreateProjectData {
   projectName: string;
   description: string;
   requiredSkills: string[];
-  deliverables: string[];
-  timeline: string;
+}
+
+export interface CollaborationRequestData {
+  message: string;
+  projectId?: string;
+  requiredSkills: string[];
 }

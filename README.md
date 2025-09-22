@@ -14,27 +14,32 @@ Find your creative co-pilot for epic projects within the Base ecosystem.
 
 - **Framework**: Next.js 15 with App Router
 - **Blockchain**: Base Network
-- **Wallet Integration**: MiniKit + OnchainKit
+- **Wallet Integration**: OnchainKit + MiniKit
 - **Styling**: Tailwind CSS
 - **Language**: TypeScript
 
 ## Getting Started
 
-1. **Install dependencies**:
+1. **Clone and Install**
    ```bash
+   git clone <repository-url>
+   cd collabforge
    npm install
    ```
 
-2. **Set up environment variables**:
-   - Copy `.env.local` and add your OnchainKit API key
-   - Get your API key from [Coinbase Developer Platform](https://portal.cdp.coinbase.com/)
+2. **Environment Setup**
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   
+   Add your OnchainKit API key from [Coinbase Developer Platform](https://portal.cdp.coinbase.com/)
 
-3. **Run the development server**:
+3. **Run Development Server**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**:
+4. **Open in Browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## Project Structure
@@ -44,21 +49,23 @@ app/
 ├── layout.tsx          # Root layout with providers
 ├── page.tsx           # Main application page
 ├── providers.tsx      # MiniKit and OnchainKit providers
-├── globals.css        # Global styles and Tailwind
-├── loading.tsx        # Loading UI
-└── error.tsx          # Error boundary
+├── globals.css        # Global styles and Tailwind imports
+├── loading.tsx        # Loading UI component
+└── error.tsx          # Error boundary component
 
 components/
-├── ProfileCard.tsx           # User profile display
-├── ProjectCard.tsx          # Project showcase
-├── CreateProjectModal.tsx   # Project creation form
-├── CollaborationRequestModal.tsx # Collaboration requests
-├── SkillFilter.tsx          # Skill-based filtering
-└── Navigation.tsx           # Bottom navigation
+├── Header.tsx                    # App header with navigation
+├── ProfileCard.tsx              # User profile display
+├── ProjectCard.tsx              # Project showcase card
+├── SkillTag.tsx                 # Skill badge component
+├── SkillFilter.tsx              # Skill filtering interface
+├── CreateProjectModal.tsx       # Project creation modal
+└── CollaborationRequestModal.tsx # Collaboration request form
 
 lib/
-├── types.ts           # TypeScript interfaces
-└── mockData.ts        # Sample data for development
+├── types.ts           # TypeScript type definitions
+├── mockData.ts        # Sample data for development
+└── utils.ts           # Utility functions
 ```
 
 ## Key Features Implementation
@@ -66,53 +73,44 @@ lib/
 ### User Profiles
 - Farcaster identity integration
 - Skill tagging system
-- Portfolio link showcase
+- Portfolio link management
 - Bio and display information
 
 ### Project Management
-- Create and manage projects
-- Define required skills
-- Track project status
-- Collaboration requests
+- Project creation with skill requirements
+- Status tracking (active, completed, paused)
+- Collaboration request handling
 
 ### Discovery & Matching
 - Skill-based filtering
-- Search functionality
-- Profile browsing
-- Connection requests
+- Profile browsing interface
+- Search and discovery optimization
 
 ### Micro-transactions
-- Pay-per-connection model ($0.05)
-- Featured profile placement ($1/24hr)
-- Base network integration
+- Pay-per-connection model ($0.05 per request)
+- Featured profile placement ($1 for 24hr)
+- Base network integration for payments
 
-## Environment Variables
+## Development Guidelines
 
-```env
-NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_api_key_here
-NEXT_PUBLIC_CHAIN_ID=8453
-NEXT_PUBLIC_RPC_URL=https://mainnet.base.org
-```
+- Follow TypeScript best practices
+- Use proper error handling and loading states
+- Implement mobile-first responsive design
+- Maintain clean component architecture
+- Follow Next.js 15 App Router patterns
 
 ## Deployment
 
-This app is optimized for deployment on Vercel or similar platforms that support Next.js 15.
-
-1. **Build the application**:
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy to your preferred platform**
-3. **Configure environment variables** in your deployment platform
+The app is optimized for deployment on Vercel or similar platforms that support Next.js applications.
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Submit a pull request
+4. Test thoroughly
+5. Submit a pull request
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see LICENSE file for details

@@ -2,7 +2,7 @@ import { User, Project } from './types';
 
 export const mockUsers: User[] = [
   {
-    farcasterId: 'user1',
+    farcasterId: '1',
     displayName: 'Sarah Chen',
     bio: 'UI/UX Designer passionate about Web3 experiences',
     profilePicUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
@@ -10,7 +10,7 @@ export const mockUsers: User[] = [
     portfolioUrls: ['https://dribbble.com/sarahchen', 'https://behance.net/sarahchen']
   },
   {
-    farcasterId: 'user2',
+    farcasterId: '2',
     displayName: 'Marcus Rodriguez',
     bio: 'Full-stack developer building the future of DeFi',
     profilePicUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
@@ -18,7 +18,7 @@ export const mockUsers: User[] = [
     portfolioUrls: ['https://github.com/marcusdev', 'https://marcus.dev']
   },
   {
-    farcasterId: 'user3',
+    farcasterId: '3',
     displayName: 'Emma Thompson',
     bio: 'Creative copywriter specializing in crypto & tech',
     profilePicUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
@@ -26,7 +26,7 @@ export const mockUsers: User[] = [
     portfolioUrls: ['https://emmawrites.com', 'https://medium.com/@emmathompson']
   },
   {
-    farcasterId: 'user4',
+    farcasterId: '4',
     displayName: 'Alex Kim',
     bio: 'Motion designer creating engaging Web3 animations',
     profilePicUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
@@ -34,35 +34,45 @@ export const mockUsers: User[] = [
     portfolioUrls: ['https://vimeo.com/alexkim', 'https://alexmotion.com']
   },
   {
-    farcasterId: 'user5',
+    farcasterId: '5',
     displayName: 'Zoe Martinez',
-    bio: 'Product manager with 5+ years in crypto startups',
-    profilePicUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+    bio: 'Product manager with a passion for user-centric design',
+    profilePicUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
     skills: ['Product Management', 'User Research', 'Analytics', 'Strategy'],
-    portfolioUrls: ['https://linkedin.com/in/zoemartinez']
+    portfolioUrls: ['https://linkedin.com/in/zoemartinez', 'https://zoepm.com']
   }
 ];
 
 export const mockProjects: Project[] = [
   {
-    projectId: 'proj1',
+    projectId: '1',
     projectName: 'DeFi Dashboard Redesign',
     description: 'Modernizing the user experience for a popular DeFi protocol dashboard',
     requiredSkills: ['UI Design', 'React', 'Data Visualization'],
     status: 'active',
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z',
-    ownerFarcasterId: 'user1'
+    createdAt: '2024-01-15',
+    updatedAt: '2024-01-20',
+    userId: 'current-user'
   },
   {
-    projectId: 'proj2',
+    projectId: '2',
     projectName: 'NFT Marketplace Launch',
     description: 'Building a new NFT marketplace focused on digital art and collectibles',
-    requiredSkills: ['Smart Contracts', 'Full-stack Development', 'UI Design'],
+    requiredSkills: ['Smart Contracts', 'Frontend Development', 'Brand Design'],
     status: 'active',
-    createdAt: '2024-01-10T14:30:00Z',
-    updatedAt: '2024-01-10T14:30:00Z',
-    ownerFarcasterId: 'user2'
+    createdAt: '2024-01-10',
+    updatedAt: '2024-01-18',
+    userId: 'current-user'
+  },
+  {
+    projectId: '3',
+    projectName: 'Crypto Education Platform',
+    description: 'Creating educational content and interactive tutorials for crypto beginners',
+    requiredSkills: ['Content Writing', 'Video Production', 'UX Design'],
+    status: 'completed',
+    createdAt: '2023-12-01',
+    updatedAt: '2024-01-05',
+    userId: 'current-user'
   }
 ];
 
@@ -78,13 +88,13 @@ export const availableSkills = [
   'Motion Graphics',
   'Video Editing',
   'Product Management',
-  'Data Analysis',
-  'Marketing',
-  'Community Management',
+  'Analytics',
   'Brand Design',
   'Frontend Development',
   'Backend Development',
-  'DevOps',
-  'Security Audit',
-  'Technical Writing'
+  'Data Visualization',
+  'Technical Writing',
+  '3D Animation',
+  'Photography',
+  'Illustration'
 ];
