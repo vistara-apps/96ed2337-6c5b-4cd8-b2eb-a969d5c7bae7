@@ -3,12 +3,16 @@
 import { SkillTagProps } from '../lib/types';
 import { getSkillColor } from '../lib/utils';
 
-export function SkillTag({ skill, variant, onClick }: SkillTagProps) {
+export function SkillTag({ skill, variant, onClick, isSelected = false }: SkillTagProps) {
   const baseClasses = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium transition-colors duration-200 cursor-pointer";
   
   const variantClasses = {
-    primary: "bg-primary text-white hover:bg-blue-600",
-    secondary: `${getSkillColor(skill)} hover:opacity-80`,
+    primary: isSelected
+      ? "bg-blue-700 text-white hover:bg-blue-800 ring-2 ring-blue-300"
+      : "bg-primary text-white hover:bg-blue-600",
+    secondary: isSelected
+      ? `${getSkillColor(skill)} ring-2 ring-blue-300`
+      : `${getSkillColor(skill)} hover:opacity-80`,
   };
 
   const handleClick = () => {

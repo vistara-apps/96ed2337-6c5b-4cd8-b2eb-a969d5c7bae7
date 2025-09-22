@@ -3,18 +3,18 @@
 import { useState } from 'react';
 import { X, Send } from 'lucide-react';
 import Image from 'next/image';
-import { User, CollaborationRequestData } from '../lib/types';
+import { User, CollaborationRequestFormData } from '../lib/types';
 import { SkillTag } from './SkillTag';
 import { mockProjects, availableSkills } from '../lib/mockData';
 
 interface CollaborationRequestModalProps {
   user: User;
   onClose: () => void;
-  onSubmit: (data: CollaborationRequestData) => void;
+  onSubmit: (data: CollaborationRequestFormData) => void;
 }
 
 export function CollaborationRequestModal({ user, onClose, onSubmit }: CollaborationRequestModalProps) {
-  const [formData, setFormData] = useState<CollaborationRequestData>({
+  const [formData, setFormData] = useState<CollaborationRequestFormData>({
     message: '',
     projectId: '',
     requiredSkills: []
