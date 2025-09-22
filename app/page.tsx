@@ -1,49 +1,74 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMiniKit } from '@coinbase/minikit';
-import { useAuthenticate } from '@coinbase/onchainkit/minikit';
 import { ProfileCard } from '../components/ProfileCard';
 import { ProjectCard } from '../components/ProjectCard';
 import { CreateProjectModal } from '../components/CreateProjectModal';
 import { CollaborationRequestModal } from '../components/CollaborationRequestModal';
 import { SkillFilter } from '../components/SkillFilter';
 import { Navigation } from '../components/Navigation';
+import { AuthModal } from '../components/AuthModal';
+import { OnboardingFlow } from '../components/OnboardingFlow';
 import { User, Project, CollaborationRequest } from '../lib/types';
-import { mockUsers, mockProjects } from '../lib/mockData';
-import { Search, Plus, Users, Briefcase } from 'lucide-react';
+import { availableSkills } from '../lib/mockData';
+import { Search, Plus, Users, Briefcase, LogIn } from 'lucide-react';
 
 export default function HomePage() {
-  const { context } = useMiniKit();
-  const { user } = useAuthenticate();
-  
   const [activeTab, setActiveTab] = useState<'discover' | 'projects'>('discover');
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>(mockUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCollabRequest, setShowCollabRequest] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
-  // Simulate loading
+  // Load data from API
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+      const [usersRes, projectsRes] = await Promise.all([
+        fetch('/api/users'),
+        fetch('/api/projects'),
+      ]);
+
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData);
+        setFilteredUsers(usersData);
+      }
+
+      if (projectsRes.ok) {
+        const projectsData = await projectsRes.json();
+        setProjects(projectsData);
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Filter users based on skills and search
   useEffect(() => {
     let filtered = users;
-    
+
     if (selectedSkills.length > 0) {
       filtered = filtered.filter(user =>
         selectedSkills.some(skill => user.skills.includes(skill))
       );
     }
-    
+
     if (searchQuery) {
       filtered = filtered.filter(user =>
         user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -51,31 +76,112 @@ export default function HomePage() {
         user.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
-    
+
     setFilteredUsers(filtered);
   }, [users, selectedSkills, searchQuery]);
 
+  // Check for existing authentication
+  useEffect(() => {
+    const token = localStorage.getItem('collabforge_token');
+    const userStr = localStorage.getItem('collabforge_user');
+
+    if (token && userStr) {
+      setAuthToken(token);
+      setCurrentUser(JSON.parse(userStr));
+    }
+  }, []);
+
+  const handleAuthSuccess = (user: User, token: string) => {
+    setCurrentUser(user);
+    setAuthToken(token);
+    localStorage.setItem('collabforge_token', token);
+    localStorage.setItem('collabforge_user', JSON.stringify(user));
+
+    // Check if user needs onboarding
+    if (!user.displayName || user.displayName.startsWith('User ')) {
+      setShowOnboarding(true);
+    }
+  };
+
+  const handleOnboardingComplete = (updatedUser: User) => {
+    setCurrentUser(updatedUser);
+    localStorage.setItem('collabforge_user', JSON.stringify(updatedUser));
+    setShowOnboarding(false);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setAuthToken(null);
+    localStorage.removeItem('collabforge_token');
+    localStorage.removeItem('collabforge_user');
+  };
+
   const handleCollaborationRequest = (targetUser: User) => {
+    if (!currentUser) {
+      setShowAuthModal(true);
+      return;
+    }
     setSelectedUser(targetUser);
     setShowCollabRequest(true);
   };
 
-  const handleCreateProject = (projectData: Omit<Project, 'projectId' | 'createdAt' | 'updatedAt'>) => {
-    const newProject: Project = {
-      ...projectData,
-      projectId: `proj_${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    setProjects(prev => [newProject, ...prev]);
-    setShowCreateProject(false);
+  const handleCreateProject = async (projectData: Omit<Project, 'projectId' | 'createdAt' | 'updatedAt' | 'ownerFarcasterId'>) => {
+    if (!currentUser || !authToken) return;
+
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          ...projectData,
+          ownerFarcasterId: currentUser.farcasterId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create project');
+      }
+
+      const newProject = await response.json();
+      setProjects(prev => [newProject, ...prev]);
+      setShowCreateProject(false);
+    } catch (error) {
+      console.error('Error creating project:', error);
+      alert('Failed to create project. Please try again.');
+    }
   };
 
-  const handleSendCollabRequest = (requestData: Omit<CollaborationRequest, 'requestId'>) => {
-    // In a real app, this would make an API call
-    console.log('Sending collaboration request:', requestData);
-    setShowCollabRequest(false);
-    setSelectedUser(null);
+  const handleSendCollabRequest = async (requestData: Omit<CollaborationRequest, 'requestId' | 'senderFarcasterId' | 'status' | 'createdAt' | 'updatedAt'>) => {
+    if (!currentUser || !authToken || !selectedUser) return;
+
+    try {
+      const response = await fetch('/api/collaborations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          ...requestData,
+          senderFarcasterId: currentUser.farcasterId,
+          recipientFarcasterId: selectedUser.farcasterId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send collaboration request');
+      }
+
+      alert('Collaboration request sent successfully!');
+      setShowCollabRequest(false);
+      setSelectedUser(null);
+    } catch (error) {
+      console.error('Error sending collaboration request:', error);
+      alert('Failed to send collaboration request. Please try again.');
+    }
   };
 
   if (isLoading) {
@@ -102,43 +208,16 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container py-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-text-primary mb-2">
-            CollabForge
-          </h1>
-          <p className="text-text-secondary">
-            Find your creative co-pilot for epic projects
-          </p>
-        </div>
+    <div className="min-h-screen bg-bg">
+      <Navigation
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        currentUser={currentUser}
+        onAuthClick={() => setShowAuthModal(true)}
+        onLogout={handleLogout}
+      />
 
-        {/* Tab Navigation */}
-        <div className="flex space-x-1 mb-6 bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => setActiveTab('discover')}
-            className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md font-medium transition-colors duration-200 ${
-              activeTab === 'discover'
-                ? 'bg-surface text-primary shadow-sm'
-                : 'text-text-secondary hover:text-text-primary'
-            }`}
-          >
-            <Users size={18} />
-            <span>Discover</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('projects')}
-            className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md font-medium transition-colors duration-200 ${
-              activeTab === 'projects'
-                ? 'bg-surface text-primary shadow-sm'
-                : 'text-text-secondary hover:text-text-primary'
-            }`}
-          >
-            <Briefcase size={18} />
-            <span>Projects</span>
-          </button>
-        </div>
+      <main className="container mx-auto px-4 py-8">
 
         {activeTab === 'discover' && (
           <>
@@ -189,15 +268,24 @@ export default function HomePage() {
         {activeTab === 'projects' && (
           <>
             {/* Create Project Button */}
-            <div className="mb-6">
-              <button
-                onClick={() => setShowCreateProject(true)}
-                className="btn-primary w-full flex items-center justify-center space-x-2"
-              >
-                <Plus size={20} />
-                <span>Create New Project</span>
-              </button>
-            </div>
+            {currentUser ? (
+              <div className="mb-6">
+                <button
+                  onClick={() => setShowCreateProject(true)}
+                  className="btn-primary w-full flex items-center justify-center space-x-2"
+                >
+                  <Plus size={20} />
+                  <span>Create New Project</span>
+                </button>
+              </div>
+            ) : (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg text-center">
+                <LogIn className="mx-auto text-gray-400 mb-2" size={24} />
+                <p className="text-text-secondary">
+                  Connect with Farcaster to create and manage projects
+                </p>
+              </div>
+            )}
 
             {/* Project Cards */}
             <div className="space-y-4">
@@ -222,13 +310,10 @@ export default function HomePage() {
             </div>
           </>
         )}
-      </div>
-
-      {/* Navigation */}
-      <Navigation />
+      </main>
 
       {/* Modals */}
-      {showCreateProject && (
+      {showCreateProject && currentUser && (
         <CreateProjectModal
           onClose={() => setShowCreateProject(false)}
           onSubmit={handleCreateProject}
@@ -243,6 +328,20 @@ export default function HomePage() {
             setSelectedUser(null);
           }}
           onSubmit={handleSendCollabRequest}
+        />
+      )}
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
+
+      {showOnboarding && currentUser && (
+        <OnboardingFlow
+          farcasterId={currentUser.farcasterId}
+          onComplete={handleOnboardingComplete}
+          onSkip={() => setShowOnboarding(false)}
         />
       )}
     </div>

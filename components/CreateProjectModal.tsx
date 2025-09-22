@@ -7,7 +7,7 @@ import { X, Plus } from 'lucide-react';
 
 interface CreateProjectModalProps {
   onClose: () => void;
-  onSubmit: (project: Omit<Project, 'projectId' | 'createdAt' | 'updatedAt'>) => void;
+  onSubmit: (project: Omit<Project, 'projectId' | 'createdAt' | 'updatedAt' | 'ownerFarcasterId'>) => void;
 }
 
 export function CreateProjectModal({ onClose, onSubmit }: CreateProjectModalProps) {
@@ -16,7 +16,6 @@ export function CreateProjectModal({ onClose, onSubmit }: CreateProjectModalProp
     description: '',
     requiredSkills: [] as string[],
     status: 'active' as const,
-    ownerFarcasterId: 'current_user' // In real app, get from auth
   });
 
   const [skillInput, setSkillInput] = useState('');

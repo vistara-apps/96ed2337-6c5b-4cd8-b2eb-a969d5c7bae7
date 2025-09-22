@@ -1,118 +1,152 @@
-# CollabForge - Base Mini App
+# CollabForge
 
-Find your creative co-pilot for epic projects within the Base ecosystem.
+A social platform for discovering and connecting with creative collaborators based on skills and project needs within the Base ecosystem.
 
 ## Features
 
-- **Skill-Based Matching**: Discover collaborators based on specific creative or technical skills
-- **Project Portfolio Showcase**: Display your work to attract the right collaborators
-- **Integrated Project Briefing**: Define project scope and requirements clearly
-- **Farcaster Integration**: Seamless social discovery within the Farcaster ecosystem
-- **Micro-transaction Model**: Pay-per-connection for quality interactions
+- **Skill-Based Matching**: Find collaborators with complementary creative skills
+- **Project Portfolio Showcase**: Display your work to attract collaborators
+- **Integrated Project Briefing**: Define project scope and requirements
+- **Farcaster Integration**: Seamless social discovery and connection
+- **Micro-transactions**: Pay-per-connection model for high-value interactions
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 with App Router
-- **Blockchain**: Base Network
-- **Wallet Integration**: MiniKit + OnchainKit
-- **Styling**: Tailwind CSS
-- **Language**: TypeScript
+- **Frontend**: Next.js 15, React 18, TailwindCSS, TypeScript
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: PostgreSQL
+- **Authentication**: JWT with Farcaster integration
+- **Social**: Farcaster (frames.js)
 
 ## Getting Started
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+### Prerequisites
 
-2. **Set up environment variables**:
-   - Copy `.env.local` and add your OnchainKit API key
-   - Get your API key from [Coinbase Developer Platform](https://portal.cdp.coinbase.com/)
+- Node.js 18+
+- PostgreSQL database
+- Farcaster account (for authentication)
 
-3. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
+### Installation
 
-4. **Open your browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## Project Structure
-
-```
-app/
-├── layout.tsx          # Root layout with providers
-├── page.tsx           # Main application page
-├── providers.tsx      # MiniKit and OnchainKit providers
-├── globals.css        # Global styles and Tailwind
-├── loading.tsx        # Loading UI
-└── error.tsx          # Error boundary
-
-components/
-├── ProfileCard.tsx           # User profile display
-├── ProjectCard.tsx          # Project showcase
-├── CreateProjectModal.tsx   # Project creation form
-├── CollaborationRequestModal.tsx # Collaboration requests
-├── SkillFilter.tsx          # Skill-based filtering
-└── Navigation.tsx           # Bottom navigation
-
-lib/
-├── types.ts           # TypeScript interfaces
-└── mockData.ts        # Sample data for development
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd collabforge
 ```
 
-## Key Features Implementation
+2. Install dependencies:
+```bash
+npm install
+```
 
-### User Profiles
-- Farcaster identity integration
-- Skill tagging system
-- Portfolio link showcase
-- Bio and display information
+3. Set up the database:
+```bash
+# Update .env with your database URL
+# Run database migrations
+npx prisma migrate dev
+```
 
-### Project Management
-- Create and manage projects
-- Define required skills
-- Track project status
-- Collaboration requests
+4. Generate Prisma client:
+```bash
+npx prisma generate
+```
 
-### Discovery & Matching
-- Skill-based filtering
-- Search functionality
-- Profile browsing
-- Connection requests
+5. Start the development server:
+```bash
+npm run dev
+```
 
-### Micro-transactions
-- Pay-per-connection model ($0.05)
-- Featured profile placement ($1/24hr)
-- Base network integration
+### Environment Variables
 
-## Environment Variables
+Create a `.env` file with the following variables:
 
 ```env
-NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_api_key_here
-NEXT_PUBLIC_CHAIN_ID=8453
-NEXT_PUBLIC_RPC_URL=https://mainnet.base.org
+DATABASE_URL="postgresql://username:password@localhost:5432/collabforge?schema=public"
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
 ```
+
+## API Documentation
+
+### Authentication
+- `POST /api/auth/farcaster` - Authenticate with Farcaster
+
+### Users
+- `GET /api/users` - Get all users (with filtering)
+- `GET /api/users/[farcasterId]` - Get user by Farcaster ID
+- `PUT /api/users/[farcasterId]` - Update user profile
+- `POST /api/users` - Create new user
+
+### Projects
+- `GET /api/projects` - Get all projects (with filtering)
+- `GET /api/projects/[projectId]` - Get project by ID
+- `PUT /api/projects/[projectId]` - Update project
+- `POST /api/projects` - Create new project
+
+### Collaborations
+- `GET /api/collaborations` - Get collaboration requests
+- `GET /api/collaborations/[requestId]` - Get collaboration request by ID
+- `PUT /api/collaborations/[requestId]` - Update collaboration status
+- `POST /api/collaborations` - Send collaboration request
+
+## Database Schema
+
+### User
+- `farcasterId` (String, Primary Key)
+- `displayName` (String)
+- `bio` (String, Optional)
+- `profilePicUrl` (String, Optional)
+- `skills` (String[], Array)
+- `portfolioUrls` (String[], Array)
+
+### Project
+- `projectId` (String, Primary Key, CUID)
+- `projectName` (String)
+- `description` (String)
+- `requiredSkills` (String[], Array)
+- `status` (Enum: active, completed, paused)
+- `ownerFarcasterId` (String, Foreign Key)
+
+### CollaborationRequest
+- `requestId` (String, Primary Key, CUID)
+- `senderFarcasterId` (String, Foreign Key)
+- `recipientFarcasterId` (String, Foreign Key)
+- `projectId` (String, Foreign Key, Optional)
+- `message` (String)
+- `status` (Enum: pending, accepted, declined)
+
+## Business Model
+
+- **Micro-transactions**: $0.05 per connection request, $1 for 24hr featured profile placement
+- **Subscription option**: Advanced filtering and unlimited requests
+- **Tokenized features**: Future on-chain governance and ownership
 
 ## Deployment
 
-This app is optimized for deployment on Vercel or similar platforms that support Next.js 15.
+### Production Setup
 
-1. **Build the application**:
-   ```bash
-   npm run build
-   ```
+1. Set up PostgreSQL database
+2. Configure environment variables
+3. Run database migrations: `npx prisma migrate deploy`
+4. Build the application: `npm run build`
+5. Start the production server: `npm start`
 
-2. **Deploy to your preferred platform**
-3. **Configure environment variables** in your deployment platform
+### Environment Variables for Production
+
+```env
+DATABASE_URL="postgresql://username:password@host:port/database?schema=public"
+JWT_SECRET="your-production-jwt-secret"
+NODE_ENV="production"
+```
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Submit a pull request
+4. Add tests if applicable
+5. Submit a pull request
 
 ## License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the MIT License.
+

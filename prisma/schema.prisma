@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  farcasterId     String   @id
+  displayName     String
+  bio             String?
+  profilePicUrl   String?
+  skills          String[] // Array of skill strings
+  portfolioUrls   String[] // Array of portfolio URL strings
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  ownedProjects         Project[]              @relation("ProjectOwner")
+  sentCollaborations    CollaborationRequest[] @relation("CollaborationSender")
+  receivedCollaborations CollaborationRequest[] @relation("CollaborationRecipient")
+
+  @@map("users")
+}
+
+model Project {
+  projectId     String   @id @default(cuid())
+  projectName   String
+  description   String
+  requiredSkills String[] // Array of required skill strings
+  status        ProjectStatus @default(active)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  ownerFarcasterId String
+
+  // Relations
+  owner         User                  @relation("ProjectOwner", fields: [ownerFarcasterId], references: [farcasterId])
+  collaborations CollaborationRequest[]
+
+  @@map("projects")
+}
+
+model CollaborationRequest {
+  requestId         String   @id @default(cuid())
+  senderFarcasterId String
+  recipientFarcasterId String
+  projectId         String?
+  message           String
+  status            CollaborationStatus @default(pending)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  sender   User     @relation("CollaborationSender", fields: [senderFarcasterId], references: [farcasterId])
+  recipient User    @relation("CollaborationRecipient", fields: [recipientFarcasterId], references: [farcasterId])
+  project  Project? @relation(fields: [projectId], references: [projectId])
+
+  @@map("collaboration_requests")
+}
+
+enum ProjectStatus {
+  active
+  completed
+  paused
+}
+
+enum CollaborationStatus {
+  pending
+  accepted
+  declined
+}
