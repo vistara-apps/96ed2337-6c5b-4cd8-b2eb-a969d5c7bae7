@@ -1,14 +1,20 @@
 'use client';
 
-import { useMiniKit } from '@coinbase/minikit';
-import { useAuthenticate } from '@coinbase/onchainkit/minikit';
+import { useState, useEffect } from 'react';
+import { useMiniKit, useAuthenticate } from '@coinbase/onchainkit/minikit';
 import { Bell, Search, User } from 'lucide-react';
 
 export function Header() {
   const { context } = useMiniKit();
-  const { user } = useAuthenticate();
+  const { signIn } = useAuthenticate();
+  const [authenticatedUser, setAuthenticatedUser] = useState<any>(null);
+  const [isClient, setIsClient] = useState(false);
 
-  const displayName = context?.user?.displayName || user?.displayName || 'Friend';
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const displayName = context?.user?.displayName || authenticatedUser?.displayName || 'Friend';
   const profilePic = context?.user?.pfpUrl;
 
   return (

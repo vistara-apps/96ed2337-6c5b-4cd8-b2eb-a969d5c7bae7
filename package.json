@@ -9,11 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@coinbase/minikit": "^0.1.0",
-    "@coinbase/onchainkit": "^0.30.0",
+    "@coinbase/onchainkit": "^1.0.2",
     "next": "15.0.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "19.0.0-rc-65a56d0e-20241020",
+    "react-dom": "19.0.0-rc-65a56d0e-20241020",
     "viem": "^2.0.0",
     "wagmi": "^2.0.0",
     "lucide-react": "^0.400.0",
@@ -23,8 +22,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc",
     "autoprefixer": "^10.0.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "15.0.0",
