@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: hsl(210, 90%, 50%);
+  --accent: hsl(130, 70%, 55%);
+  --background: hsl(210, 36%, 96%);
+  --surface: hsl(0, 0%, 100%);
+  --text-primary: hsl(210, 40%, 15%);
+  --text-secondary: hsl(210, 40%, 35%);
+  --purple-gradient-start: hsl(260, 60%, 65%);
+  --purple-gradient-end: hsl(240, 70%, 75%);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+body {
+  color: var(--text-primary);
+  background: var(--background);
+}
+
+@layer components {
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--purple-gradient-start) 0%, var(--purple-gradient-end) 100%);
+  }
+  
+  .card-shadow {
+    box-shadow: var(--card-shadow);
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-surface text-text-primary border border-gray-200 px-4 py-2 rounded-md font-medium hover:bg-gray-50 transition-colors duration-200;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+  
+  .skill-tag {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary;
+  }
+  
+  .skill-tag-secondary {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-text-secondary;
+  }
+}
