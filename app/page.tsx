@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMiniKit } from '@coinbase/minikit';
 import { Header } from '../components/Header';
 import { ProfileCard } from '../components/ProfileCard';
 import { ProjectCard } from '../components/ProjectCard';
@@ -12,7 +11,6 @@ import { mockUsers, mockProjects } from '../lib/mockData';
 import { User, Project } from '../lib/types';
 
 export default function HomePage() {
-  const { context } = useMiniKit();
   const [activeTab, setActiveTab] = useState<'discover' | 'projects'>('discover');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [showCreateProject, setShowCreateProject] = useState(false);
@@ -36,7 +34,7 @@ export default function HomePage() {
     setShowCollabRequest(true);
   };
 
-  const displayName = context?.user?.displayName || 'Creative';
+  const displayName = 'Creative';
 
   return (
     <div className="min-h-screen bg-background">
