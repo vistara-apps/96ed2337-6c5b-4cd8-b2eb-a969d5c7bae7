@@ -16,7 +16,6 @@ export interface Project {
   createdAt: string;
   updatedAt: string;
   ownerFarcasterId: string;
-  collaborators?: string[];
 }
 
 export interface CollaborationRequest {
@@ -29,10 +28,10 @@ export interface CollaborationRequest {
   createdAt: string;
 }
 
-export interface CreateProjectData {
+export interface ProjectBrief {
   projectName: string;
   description: string;
   requiredSkills: string[];
-  status: 'active';
-  ownerFarcasterId: string;
+  deliverables: string[];
+  timeline: string;
 }

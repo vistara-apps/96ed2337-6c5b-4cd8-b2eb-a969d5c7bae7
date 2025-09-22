@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'CollabForge - Find Your Creative Co-pilot',
   description: 'A social platform for discovering and connecting with creative collaborators based on skills and project needs within the Base ecosystem.',
   openGraph: {
-    title: 'CollabForge - Find Your Creative Co-pilot',
+    title: 'CollabForge',
     description: 'Find your creative co-pilot for epic projects.',
     images: ['/og-image.png'],
   },
@@ -21,7 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          {children}
+          <div className="min-h-screen bg-background">
+            {children}
+          </div>
         </Providers>
       </body>
     </html>

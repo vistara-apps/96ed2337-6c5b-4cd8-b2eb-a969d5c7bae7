@@ -8,13 +8,13 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center p-6">
         <h2 className="text-2xl font-bold text-text-primary mb-4">
           Something went wrong!
         </h2>
         <p className="text-text-secondary mb-6">
-          We encountered an error while loading CollabForge. Please try again.
+          We encountered an error while loading CollabForge.
         </p>
         <button
           onClick={reset}

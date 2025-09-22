@@ -7,16 +7,16 @@ Find your creative co-pilot for epic projects within the Base ecosystem.
 - **Skill-Based Matching**: Discover collaborators based on specific creative or technical skills
 - **Project Portfolio Showcase**: Display your work to attract the right collaborators
 - **Integrated Project Briefing**: Define project scope and requirements clearly
-- **Farcaster Integration**: Seamless identity and social features
-- **Micro-transaction Model**: Pay-per-connection requests and featured placements
+- **Farcaster Integration**: Seamless social discovery within the Farcaster ecosystem
+- **Micro-transaction Model**: Pay-per-connection for quality interactions
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with App Router
-- **Blockchain**: Base Network integration via MiniKit
-- **Identity**: OnchainKit for wallet and identity management
-- **Styling**: Tailwind CSS with custom design system
-- **TypeScript**: Full type safety throughout
+- **Blockchain**: Base Network
+- **Wallet Integration**: MiniKit + OnchainKit
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
 
 ## Getting Started
 
@@ -26,18 +26,16 @@ Find your creative co-pilot for epic projects within the Base ecosystem.
    ```
 
 2. **Set up environment variables**:
-   Copy `.env.local` and add your OnchainKit API key:
-   ```bash
-   NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_api_key_here
-   ```
+   - Copy `.env.local` and add your OnchainKit API key
+   - Get your API key from [Coinbase Developer Platform](https://portal.cdp.coinbase.com/)
 
 3. **Run the development server**:
    ```bash
    npm run dev
    ```
 
-4. **Open in Base App**:
-   Navigate to `http://localhost:3000` in Base App or compatible Farcaster client
+4. **Open your browser**:
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## Project Structure
 
@@ -46,85 +44,75 @@ app/
 ├── layout.tsx          # Root layout with providers
 ├── page.tsx           # Main application page
 ├── providers.tsx      # MiniKit and OnchainKit providers
-├── globals.css        # Global styles and design tokens
-└── loading.tsx        # Loading UI
+├── globals.css        # Global styles and Tailwind
+├── loading.tsx        # Loading UI
+└── error.tsx          # Error boundary
 
 components/
-├── Header.tsx                    # App header with user info
-├── ProfileCard.tsx              # User profile display
-├── ProjectCard.tsx              # Project showcase
-├── SkillFilter.tsx              # Skill filtering component
-├── CreateProjectModal.tsx       # Project creation modal
-├── CollaborationRequestModal.tsx # Collaboration request form
-└── LoadingSpinner.tsx           # Loading indicator
+├── ProfileCard.tsx           # User profile display
+├── ProjectCard.tsx          # Project showcase
+├── CreateProjectModal.tsx   # Project creation form
+├── CollaborationRequestModal.tsx # Collaboration requests
+├── SkillFilter.tsx          # Skill-based filtering
+└── Navigation.tsx           # Bottom navigation
 
 lib/
-├── types.ts           # TypeScript type definitions
-├── mockData.ts        # Sample data for development
-└── utils.ts           # Utility functions
+├── types.ts           # TypeScript interfaces
+└── mockData.ts        # Sample data for development
 ```
 
-## Key Components
+## Key Features Implementation
 
 ### User Profiles
-- Display skills, bio, and portfolio links
-- Skill-based filtering and search
-- Collaboration request system
+- Farcaster identity integration
+- Skill tagging system
+- Portfolio link showcase
+- Bio and display information
 
-### Projects
-- Project creation with skill requirements
-- Status tracking (active, completed, paused)
-- Collaborator management
+### Project Management
+- Create and manage projects
+- Define required skills
+- Track project status
+- Collaboration requests
+
+### Discovery & Matching
+- Skill-based filtering
+- Search functionality
+- Profile browsing
+- Connection requests
 
 ### Micro-transactions
-- $0.05 per collaboration request
-- $1 for 24-hour featured profile placement
-- Integrated with Base network for payments
+- Pay-per-connection model ($0.05)
+- Featured profile placement ($1/24hr)
+- Base network integration
 
-## Design System
+## Environment Variables
 
-The app uses a custom design system with:
-- **Primary Color**: `hsl(210, 90%, 50%)` (Blue)
-- **Accent Color**: `hsl(130, 70%, 55%)` (Green)
-- **Purple Gradient**: Matching the brand aesthetic
-- **Mobile-first**: Responsive design optimized for mobile
-
-## Development
-
-### Adding New Features
-
-1. Define types in `lib/types.ts`
-2. Create components in `components/`
-3. Add mock data to `lib/mockData.ts`
-4. Implement in main page or create new routes
-
-### Styling Guidelines
-
-- Use Tailwind CSS classes
-- Follow the design system tokens
-- Ensure mobile-first responsive design
-- Use semantic color variables
+```env
+NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_api_key_here
+NEXT_PUBLIC_CHAIN_ID=8453
+NEXT_PUBLIC_RPC_URL=https://mainnet.base.org
+```
 
 ## Deployment
 
-The app is designed to be deployed as a Base Mini App:
+This app is optimized for deployment on Vercel or similar platforms that support Next.js 15.
 
-1. Build the application:
+1. **Build the application**:
    ```bash
    npm run build
    ```
 
-2. Deploy to your preferred hosting platform
-3. Configure the Mini App manifest for Base App discovery
+2. **Deploy to your preferred platform**
+3. **Configure environment variables** in your deployment platform
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+4. Submit a pull request
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License - see LICENSE file for details.

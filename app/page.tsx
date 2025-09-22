@@ -3,44 +3,57 @@
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@coinbase/minikit';
 import { useAuthenticate } from '@coinbase/onchainkit/minikit';
-import { Header } from '../components/Header';
 import { ProfileCard } from '../components/ProfileCard';
 import { ProjectCard } from '../components/ProjectCard';
 import { CreateProjectModal } from '../components/CreateProjectModal';
 import { CollaborationRequestModal } from '../components/CollaborationRequestModal';
 import { SkillFilter } from '../components/SkillFilter';
-import { LoadingSpinner } from '../components/LoadingSpinner';
+import { Navigation } from '../components/Navigation';
+import { User, Project, CollaborationRequest } from '../lib/types';
 import { mockUsers, mockProjects } from '../lib/mockData';
-import type { User, Project } from '../lib/types';
+import { Search, Plus, Users, Briefcase } from 'lucide-react';
 
 export default function HomePage() {
   const { context } = useMiniKit();
   const { user } = useAuthenticate();
+  
   const [activeTab, setActiveTab] = useState<'discover' | 'projects'>('discover');
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [projects, setProjects] = useState<Project[]>(mockProjects);
   const [filteredUsers, setFilteredUsers] = useState<User[]>(mockUsers);
-  const [userProjects, setUserProjects] = useState<Project[]>(mockProjects);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCollabRequest, setShowCollabRequest] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Simulate loading
   useEffect(() => {
-    // Simulate loading
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
+  // Filter users based on skills and search
   useEffect(() => {
-    if (selectedSkills.length === 0) {
-      setFilteredUsers(mockUsers);
-    } else {
-      const filtered = mockUsers.filter(user =>
-        user.skills.some(skill => selectedSkills.includes(skill))
+    let filtered = users;
+    
+    if (selectedSkills.length > 0) {
+      filtered = filtered.filter(user =>
+        selectedSkills.some(skill => user.skills.includes(skill))
       );
-      setFilteredUsers(filtered);
     }
-  }, [selectedSkills]);
+    
+    if (searchQuery) {
+      filtered = filtered.filter(user =>
+        user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.bio.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    
+    setFilteredUsers(filtered);
+  }, [users, selectedSkills, searchQuery]);
 
   const handleCollaborationRequest = (targetUser: User) => {
     setSelectedUser(targetUser);
@@ -54,118 +67,165 @@ export default function HomePage() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    setUserProjects(prev => [newProject, ...prev]);
+    setProjects(prev => [newProject, ...prev]);
     setShowCreateProject(false);
+  };
+
+  const handleSendCollabRequest = (requestData: Omit<CollaborationRequest, 'requestId'>) => {
+    // In a real app, this would make an API call
+    console.log('Sending collaboration request:', requestData);
+    setShowCollabRequest(false);
+    setSelectedUser(null);
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <LoadingSpinner />
+      <div className="container py-8">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="card">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
-      {/* Hero Section */}
-      <div className="gradient-bg text-white px-4 py-8">
-        <div className="max-w-xl mx-auto text-center">
-          <h1 className="text-2xl font-bold leading-tight mb-2">
-            Find your creative co-pilot for epic projects
+      <div className="container py-6">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-text-primary mb-2">
+            CollabForge
           </h1>
-          <p className="text-white/90 text-sm leading-6 mb-6">
-            Connect with talented creators and collaborate on amazing projects within the Base ecosystem.
+          <p className="text-text-secondary">
+            Find your creative co-pilot for epic projects
           </p>
-          <div className="flex gap-3 justify-center">
-            <button
-              onClick={() => setActiveTab('discover')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 ${
-                activeTab === 'discover'
-                  ? 'bg-white text-purple-600'
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              Browse Makers
-            </button>
-            <button
-              onClick={() => setActiveTab('projects')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 ${
-                activeTab === 'projects'
-                  ? 'bg-white text-purple-600'
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              Browse Projects
-            </button>
-          </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-xl mx-auto px-4 py-6">
+        {/* Tab Navigation */}
+        <div className="flex space-x-1 mb-6 bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setActiveTab('discover')}
+            className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md font-medium transition-colors duration-200 ${
+              activeTab === 'discover'
+                ? 'bg-surface text-primary shadow-sm'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            <Users size={18} />
+            <span>Discover</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('projects')}
+            className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md font-medium transition-colors duration-200 ${
+              activeTab === 'projects'
+                ? 'bg-surface text-primary shadow-sm'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            <Briefcase size={18} />
+            <span>Projects</span>
+          </button>
+        </div>
+
         {activeTab === 'discover' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-text-primary">
-                Discover Creators
-              </h2>
-              <button
-                onClick={() => setShowCreateProject(true)}
-                className="btn-primary text-sm"
-              >
-                Post Project
-              </button>
-            </div>
-
-            <SkillFilter
-              selectedSkills={selectedSkills}
-              onSkillsChange={setSelectedSkills}
-            />
-
-            <div className="space-y-4">
-              {filteredUsers.map((user) => (
-                <ProfileCard
-                  key={user.farcasterId}
-                  user={user}
-                  onCollaborate={() => handleCollaborationRequest(user)}
+          <>
+            {/* Search and Filters */}
+            <div className="space-y-4 mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  placeholder="Search collaborators..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="input-field pl-10"
                 />
-              ))}
+              </div>
+              
+              <SkillFilter
+                selectedSkills={selectedSkills}
+                onSkillsChange={setSelectedSkills}
+              />
             </div>
-          </div>
+
+            {/* User Cards */}
+            <div className="space-y-4">
+              {filteredUsers.length === 0 ? (
+                <div className="text-center py-12">
+                  <Users className="mx-auto text-gray-400 mb-4" size={48} />
+                  <h3 className="text-lg font-medium text-text-primary mb-2">
+                    No collaborators found
+                  </h3>
+                  <p className="text-text-secondary">
+                    Try adjusting your search or filters
+                  </p>
+                </div>
+              ) : (
+                filteredUsers.map((user) => (
+                  <ProfileCard
+                    key={user.farcasterId}
+                    user={user}
+                    onCollaborate={() => handleCollaborationRequest(user)}
+                  />
+                ))
+              )}
+            </div>
+          </>
         )}
 
         {activeTab === 'projects' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-text-primary">
-                Active Projects
-              </h2>
+          <>
+            {/* Create Project Button */}
+            <div className="mb-6">
               <button
                 onClick={() => setShowCreateProject(true)}
-                className="btn-primary text-sm"
+                className="btn-primary w-full flex items-center justify-center space-x-2"
               >
-                Create Project
+                <Plus size={20} />
+                <span>Create New Project</span>
               </button>
             </div>
 
+            {/* Project Cards */}
             <div className="space-y-4">
-              {userProjects.map((project) => (
-                <ProjectCard
-                  key={project.projectId}
-                  project={project}
-                  onJoinProject={() => {
-                    // Handle join project logic
-                    console.log('Join project:', project.projectId);
-                  }}
-                />
-              ))}
+              {projects.length === 0 ? (
+                <div className="text-center py-12">
+                  <Briefcase className="mx-auto text-gray-400 mb-4" size={48} />
+                  <h3 className="text-lg font-medium text-text-primary mb-2">
+                    No projects yet
+                  </h3>
+                  <p className="text-text-secondary">
+                    Create your first project to start collaborating
+                  </p>
+                </div>
+              ) : (
+                projects.map((project) => (
+                  <ProjectCard
+                    key={project.projectId}
+                    project={project}
+                  />
+                ))
+              )}
             </div>
-          </div>
+          </>
         )}
       </div>
+
+      {/* Navigation */}
+      <Navigation />
 
       {/* Modals */}
       {showCreateProject && (
@@ -182,11 +242,7 @@ export default function HomePage() {
             setShowCollabRequest(false);
             setSelectedUser(null);
           }}
-          onSubmit={(message) => {
-            console.log('Collaboration request sent:', message);
-            setShowCollabRequest(false);
-            setSelectedUser(null);
-          }}
+          onSubmit={handleSendCollabRequest}
         />
       )}
     </div>

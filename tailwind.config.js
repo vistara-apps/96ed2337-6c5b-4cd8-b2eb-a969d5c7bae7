@@ -14,8 +14,7 @@ module.exports = {
         surface: 'hsl(0, 0%, 100%)',
         'text-primary': 'hsl(210, 40%, 15%)',
         'text-secondary': 'hsl(210, 40%, 35%)',
-        'purple-gradient-start': 'hsl(260, 60%, 65%)',
-        'purple-gradient-end': 'hsl(240, 70%, 75%)',
+        'muted-foreground': 'hsl(210, 40%, 35%)',
       },
       borderRadius: {
         'sm': '4px',
