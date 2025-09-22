@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMiniKit } from '@coinbase/minikit';
+// import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { ProfileCard } from '../components/ProfileCard';
 import { ProjectCard } from '../components/ProjectCard';
 import { PrimaryButton } from '../components/PrimaryButton';
@@ -10,7 +10,7 @@ import { Search, Plus, Filter, Users, Briefcase } from 'lucide-react';
 import { User, Project } from '../lib/types';
 
 export default function HomePage() {
-  const { context } = useMiniKit();
+  // const { context } = useMiniKit();
   const [activeTab, setActiveTab] = useState<'discover' | 'projects'>('discover');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -113,13 +113,14 @@ export default function HomePage() {
               <h1 className="text-2xl font-bold text-text-primary">CollabForge</h1>
               <p className="text-sm text-text-secondary">Find your creative co-pilot</p>
             </div>
-            {context?.user?.pfpUrl && (
-              <img 
-                src={context.user.pfpUrl} 
-                alt="Profile" 
+            {/* Profile picture will be shown here when MiniKit is available */}
+            {/* {context?.user?.pfpUrl && (
+              <img
+                src={context.user.pfpUrl}
+                alt="Profile"
                 className="w-10 h-10 rounded-full"
               />
-            )}
+            )} */}
           </div>
 
           {/* Tab Navigation */}

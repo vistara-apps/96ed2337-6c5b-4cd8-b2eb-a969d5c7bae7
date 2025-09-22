@@ -50,9 +50,9 @@ export const mockProjects: Project[] = [
     description: 'Modernizing the user experience for a popular DeFi protocol dashboard',
     requiredSkills: ['UI Design', 'React', 'Data Visualization'],
     status: 'active',
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-20',
-    userId: 'current-user'
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-20'),
+    ownerFarcasterId: 'current-user'
   },
   {
     projectId: '2',
@@ -60,9 +60,9 @@ export const mockProjects: Project[] = [
     description: 'Building a new NFT marketplace focused on digital art and collectibles',
     requiredSkills: ['Smart Contracts', 'Frontend Development', 'Brand Design'],
     status: 'active',
-    createdAt: '2024-01-10',
-    updatedAt: '2024-01-18',
-    userId: 'current-user'
+    createdAt: new Date('2024-01-10'),
+    updatedAt: new Date('2024-01-18'),
+    ownerFarcasterId: 'current-user'
   },
   {
     projectId: '3',
@@ -70,9 +70,9 @@ export const mockProjects: Project[] = [
     description: 'Creating educational content and interactive tutorials for crypto beginners',
     requiredSkills: ['Content Writing', 'Video Production', 'UX Design'],
     status: 'completed',
-    createdAt: '2023-12-01',
-    updatedAt: '2024-01-05',
-    userId: 'current-user'
+    createdAt: new Date('2023-12-01'),
+    updatedAt: new Date('2024-01-05'),
+    ownerFarcasterId: 'current-user'
   }
 ];
 

@@ -28,6 +28,18 @@ export interface CollaborationRequest {
   createdAt: Date;
 }
 
+export interface CollaborationRequestFormData {
+  message: string;
+  projectId: string;
+  requiredSkills: string[];
+}
+
+export interface CreateProjectData {
+  projectName: string;
+  description: string;
+  requiredSkills: string[];
+}
+
 export interface ProfileCardProps {
   user: User;
   variant: 'default' | 'compact';
@@ -42,6 +54,7 @@ export interface SkillTagProps {
   skill: string;
   variant: 'primary' | 'secondary';
   onClick?: () => void;
+  isSelected?: boolean;
 }
 
 export interface PrimaryButtonProps {
